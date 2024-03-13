@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -14,7 +15,7 @@ public class Player : MonoBehaviour
     [SerializeField] float playerCurHp = 0.0f;
     bool isJump = false; //점프하는중인지
     bool isAttack = false;//공격중인지
-    [SerializeField]bool isDeath = false;
+    [SerializeField]bool isDeath;
 
     Camera cam;
     Animator anim;

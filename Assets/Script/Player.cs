@@ -4,31 +4,51 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-
-    [SerializeField,Tooltip("플레이어 이동속도")] private float playerSpeed = 0.0f; 
-    [SerializeField,Tooltip("점프하는 힘")]float jumpForce = 0.0f;
-    [SerializeField,Tooltip("중력값")]float gravity = 9.81f;
-    [SerializeField]bool isGround = false; //땅에 닿았는지
-    [SerializeField]float verticalVelocity; //플레이어 수직값
+    [Header("플레이어데이터")]
+    [SerializeField,Tooltip("플레이어 이동속도")] float playerSpeed = 0.0f; 
+    [SerializeField,Tooltip("점프하는 힘")] float jumpForce = 0.0f;
+    [SerializeField,Tooltip("중력값")] float gravity = 9.81f;
+    [SerializeField] bool isGround = false; //땅에 닿았는지
+    [SerializeField] float verticalVelocity; //플레이어 수직값
+    [SerializeField] float playerMaxHp = 0.0f;
+    [SerializeField] float playerCurHp = 0.0f;
     bool isJump = false; //점프하는중인지
+    bool isAttack = false;//공격중인지
+    [SerializeField]bool isDeath = false;
+
     Camera cam;
     Animator anim;
     Rigidbody2D rigid;
     BoxCollider2D boxCollider;
     Vector3 moveDir; //플레이어 이동값
 
+    [Header("슬라이드")]
+    bool isSlide = false;//대쉬하는중인지
+    [SerializeField,Tooltip("슬라이딩 쿨타임")]float slideTimer = 0.0f;
+    float slideTime = 0.0f;
+
+
+    public void Hit(float _damage)
+    {
+        playerCurHp -= _damage;
+        if (playerCurHp == 0)
+        {
+            isDeath = true;
+        }
+    }
+
     private void Awake()
     {
-        cam = Camera.main;
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         transform.position = new Vector2(-18f, -2);
+        playerCurHp = playerMaxHp;
     }
 
     void Start()
     {
-        
+        cam = Camera.main;
     }
 
     void Update()
@@ -39,13 +59,15 @@ public class Player : MonoBehaviour
         checkGround();
         dojump();
         checkGravity();
-        //공격
+        attack();
+        slide();
     }
     /// <summary>
     /// 플레이어 이동
     /// </summary>
     private void move()
     {
+        if (isSlide == true) return;
         moveDir.x = Input.GetAxisRaw("Horizontal") * playerSpeed;
         moveDir.y = rigid.velocity.y;
         rigid.velocity = moveDir;
@@ -57,6 +79,9 @@ public class Player : MonoBehaviour
     {
         anim.SetInteger("Horizontal", (int)moveDir.x);
         anim.SetBool("isGround", isGround);
+        anim.SetBool("Attack", isAttack);
+        anim.SetBool("Slide", isSlide);
+        anim.SetBool("Death", isDeath);
     }
     /// <summary>
     /// 입력된 방향키에 따른 플레이어가 바라보는 방향
@@ -90,6 +115,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void dojump()
     {
+        if (isSlide == true) return;
         if (Input.GetKeyDown(KeyCode.Space) && isGround == true)//키를 눌렀을때 isground가 true라면
         {
             isJump = true;
@@ -100,6 +126,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void checkGravity()
     {
+        if (isSlide == true) return;
         //isGround 가 false 일때 중력이 시간에 따라 증가함
         if(isGround == false)
         {
@@ -120,5 +147,53 @@ public class Player : MonoBehaviour
             verticalVelocity = jumpForce;
         }
         rigid.velocity = new Vector2(rigid.velocity.x, verticalVelocity);
+    }
+    /// <summary>
+    /// 특정키 입력시 캐릭터가 공격함
+    /// </summary>
+    private void attack()
+    {
+        if(Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            isAttack = true;
+        }
+        else
+        {
+            isAttack = false;
+        }
+    }
+    /// <summary>
+    /// 캐릭터가 슬라이딩을 함
+    /// </summary>
+    private void slide()
+    {
+        if (isGround == false) return;
+        if(Input.GetKeyDown(KeyCode.LeftShift) && isSlide == false)
+        {
+            isSlide = true;
+            verticalVelocity = 0f;
+            //캐릭터가 보고있는 방향에 따라 슬라이딩 값 다르게
+            if(transform.localScale.x == 1)
+            {
+                rigid.velocity = new Vector2(10f, 0f);
+            }
+            else if(transform.localScale.x == -1)
+            {
+                rigid.velocity = new Vector2(-10f, 0f);
+            }
+            //캐릭터가 slide layer 획득하고 물리무시
+            gameObject.layer = LayerMask.NameToLayer("Slide");
+        }
+        else if(isSlide == true)//슬라이딩이 true
+        {
+            slideTime += Time.deltaTime;//내부타이머 증가
+            if(slideTime >= slideTimer)//설정한 쿨타임보다 크거나 같으면
+            {
+                slideTime = 0f;
+                isSlide = false;
+                //플레이어 layer으로 변경
+                gameObject.layer = LayerMask.NameToLayer("Player");
+            }
+        }
     }
 }

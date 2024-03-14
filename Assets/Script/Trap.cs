@@ -6,13 +6,12 @@ public class Trap : MonoBehaviour
 {
     Player player;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.tag == "Player")
+        if (collision.gameObject.tag == "Player")
         {
             player = collision.gameObject.GetComponent<Player>();
             player.Hit(1);
         }
     }
-    
 }

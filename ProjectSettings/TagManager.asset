@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Elevator
   - Enemy
+  - Ladder
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - Player
   - PlayerDamage
   - Enemy
-  - 
+  - Ladder
   - 
   - 
   - 

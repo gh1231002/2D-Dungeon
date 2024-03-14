@@ -8,6 +8,8 @@ public class Elevator : MonoBehaviour
     [SerializeField]bool isUp;
     [SerializeField]bool isDown;
     float timer = 0.0f;
+
+    
     void Start()
     {
         //transform.position = new Vector2(7, -3.5f);
@@ -53,5 +55,16 @@ public class Elevator : MonoBehaviour
             }
         }
         transform.position = movePostion;
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Player")
+        {
+            collision.gameObject.transform.SetParent(this.transform);
+        }
+    }
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        collision.gameObject.transform.SetParent(null);
     }
 }

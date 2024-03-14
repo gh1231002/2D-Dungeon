@@ -28,6 +28,30 @@ public class Player : MonoBehaviour
     [SerializeField,Tooltip("슬라이딩 쿨타임")]float slideTimer = 0.0f;
     float slideTime = 0.0f;
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Enemy")
+        {
+            onDamaged();
+        }
+    }
+    /// <summary>
+    /// 플레이어가 데미지를 입었을때 튕겨나고 일정시간 무적
+    /// </summary>
+    private void onDamaged()
+    {
+        gameObject.layer = LayerMask.NameToLayer("PlayerDamage");
+
+        //닿은 위치에서 반대방향으로 튕기게
+
+        Invoke("offDamage", 2);
+    }
+
+    private void offDamage()
+    {
+        gameObject.layer = LayerMask.NameToLayer("Player");
+        
+    }
 
     public void Hit(float _damage)
     {
@@ -43,7 +67,7 @@ public class Player : MonoBehaviour
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
-        transform.position = new Vector2(-18f, -2);
+        //transform.position = new Vector2(-18f, -2); //시작 위치
         playerCurHp = playerMaxHp;
     }
 

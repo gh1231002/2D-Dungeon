@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     float enterTimer = 0.0f;
     [SerializeField,Tooltip("닿았을때 튕겨나가는 힘")] float enterForce = 0.0f;
     bool isHurt = false;
+    [SerializeField]bool isLadder = false;//사다리
 
     Camera cam;
     Animator anim;
@@ -42,14 +43,25 @@ public class Player : MonoBehaviour
             Vector2 target = collision.transform.position;
             onDamaged(target);
         }
-        if (collision.gameObject.tag == "Player")
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Ladder")//사다리에 닿으면
         {
-            collision.gameObject.layer = LayerMask.NameToLayer("Ladder");
+            gameObject.layer = LayerMask.NameToLayer("Ladder");
+            rigid.isKinematic = true;
         }
     }
-    private void OnCollisionExit2D(Collision2D collision)
+
+    private void OnTriggerExit2D(Collider2D collision)
     {
-        collision.gameObject.layer = LayerMask.NameToLayer("Player");
+        if (collision.gameObject.tag == "Ladder")
+        {
+            gameObject.layer = LayerMask.NameToLayer("Player");
+            rigid.isKinematic = false;
+            isLadder = false;
+        }
     }
 
     /// <summary>
@@ -106,6 +118,7 @@ public class Player : MonoBehaviour
     {
         if (isDeath == true) return;
         move();
+        doLadder();
         doAni();
         turnDir();
         checkGround();
@@ -120,12 +133,28 @@ public class Player : MonoBehaviour
     /// </summary>
     private void move()
     {
-        if (isSlide == true || isEnter == true || isHurt == true) 
+        if (isSlide == true || isEnter == true || isHurt == true)
             return;
 
         moveDir.x = Input.GetAxisRaw("Horizontal") * playerSpeed;
         moveDir.y = rigid.velocity.y;
         rigid.velocity = moveDir;
+    }
+    /// <summary>
+    /// 플레이어 layer가 Ladder일때 동작하는 함수
+    /// </summary>
+    private void doLadder()
+    {
+        if(gameObject.layer == 11 && Input.GetKeyDown(KeyCode.W))
+        {
+            isLadder = true;
+            rigid.velocity += Vector2.up;
+        }
+        if (gameObject.layer == 11 && Input.GetKeyDown(KeyCode.S))
+        {
+            isLadder = true;
+            rigid.velocity += Vector2.down;
+        }
     }
     /// <summary>
     /// 플레이어 애니메이션 연결
@@ -137,6 +166,7 @@ public class Player : MonoBehaviour
         anim.SetBool("Attack", isAttack);
         anim.SetBool("Slide", isSlide);
         anim.SetBool("Hurt", isHurt);
+        anim.SetBool("Ladder", isLadder);
     }
     /// <summary>
     /// 입력된 방향키에 따른 플레이어가 바라보는 방향
@@ -181,7 +211,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void checkGravity()
     {
-        if (isSlide == true || isEnter == true || isHurt == true) return;
+        if (isSlide == true || isEnter == true || isHurt == true || isLadder == true) return;
         //isGround 가 false 일때 중력이 시간에 따라 증가함
         if(isGround == false)
         {

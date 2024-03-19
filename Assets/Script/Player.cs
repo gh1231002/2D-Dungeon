@@ -119,6 +119,7 @@ public class Player : MonoBehaviour
         if (isDeath == true) return;
         move();
         doLadder();
+        climingLadder();
         doAni();
         turnDir();
         checkGround();
@@ -145,16 +146,27 @@ public class Player : MonoBehaviour
     /// </summary>
     private void doLadder()
     {
-        if(gameObject.layer == 11 && Input.GetKeyDown(KeyCode.W))
+        if(gameObject.layer == 11 && Input.GetKeyDown(KeyCode.UpArrow))
         {
             isLadder = true;
-            rigid.velocity += Vector2.up;
+            //rigid.velocity += Vector2.up;
         }
-        if (gameObject.layer == 11 && Input.GetKeyDown(KeyCode.S))
+        if (gameObject.layer == 11 && Input.GetKeyDown(KeyCode.DownArrow))
         {
             isLadder = true;
-            rigid.velocity += Vector2.down;
+            //rigid.velocity += Vector2.down;
         }
+    }
+    /// <summary>
+    /// isLadder가 true일때만 작동하는 사다리 애니메이션 함수
+    /// </summary>
+    private void climingLadder()
+    {
+        if (isLadder == false) return;//사다리에 닿지 않았을땐 동작하지않음
+
+        float velVertical = Input.GetAxisRaw("Vertical");//변수에 vertical 누를때의 값을 저장
+        anim.SetFloat("LadderM", velVertical);//누를때만 애니메이션이 작동, 파라미터에 값을 전달
+        rigid.velocity = new Vector2(moveDir.x, velVertical);//rigid 값에 위아래로 움직이는 값을 넣음
     }
     /// <summary>
     /// 플레이어 애니메이션 연결

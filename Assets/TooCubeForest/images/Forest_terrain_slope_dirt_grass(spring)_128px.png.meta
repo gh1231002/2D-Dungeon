@@ -54,7 +54,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 128
+  spritePixelsToUnits: 115
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -85,7 +85,7 @@ TextureImporter:
     overridden: 0
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 1
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Standalone
     maxTextureSize: 2048
@@ -98,7 +98,7 @@ TextureImporter:
     overridden: 0
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 1
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
     buildTarget: Android
     maxTextureSize: 2048
@@ -124,7 +124,7 @@ TextureImporter:
     overridden: 0
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 1
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -137,11 +137,23 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
+      outline:
+      - - {x: 52, y: 63}
+        - {x: -64, y: -52}
+        - {x: -64, y: -64}
+        - {x: -60, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+      physicsShape:
+      - - {x: 54, y: 64}
+        - {x: -62, y: -53}
+        - {x: -62, y: -64}
+        - {x: -53, y: -64}
+        - {x: 64, y: -64}
+        - {x: 64, y: 64}
+      tessellationDetail: 1
       bones: []
       spriteID: b8c44a7103440554483da69bf521346e
       internalID: 21300000
@@ -158,11 +170,26 @@ TextureImporter:
         width: 128
         height: 128
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
+      outline:
+      - - {x: -54, y: 64}
+        - {x: -64, y: 64}
+        - {x: -64, y: 63}
+        - {x: -64, y: -63}
+        - {x: -64, y: -63}
+        - {x: -61, y: -64}
+        - {x: 62, y: -64}
+        - {x: 62, y: -52}
+      physicsShape:
+      - - {x: -64, y: 64}
+        - {x: -64, y: 62}
+        - {x: -64, y: -62}
+        - {x: -62, y: -64}
+        - {x: 64, y: -63}
+        - {x: 64, y: -55}
+        - {x: -53, y: 64}
+      tessellationDetail: 1
       bones: []
       spriteID: 8a3bf36fad30ac24295349bf51d5fbaa
       internalID: 21300002

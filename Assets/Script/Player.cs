@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
     [SerializeField,Tooltip("닿았을때 튕겨나가는 힘")] float enterForce = 0.0f;
     bool isHurt = false;
     [SerializeField]bool isLadder = false;//사다리
+    [SerializeField] BoxCollider2D AttackBox;
+    float attackTimer = 0.0f;
 
     Camera cam;
     Animator anim;
@@ -105,6 +107,7 @@ public class Player : MonoBehaviour
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
+        AttackBox.enabled = false;
         //transform.position = new Vector2(-18f, -2); //시작 위치
         playerCurHp = playerMaxHp;
     }
@@ -253,11 +256,16 @@ public class Player : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.LeftControl))
         {
             isAttack = true;
+            AttackBox.enabled = true;
         }
         else
         {
             isAttack = false;
         }
+    }
+    private void AttackCooltime()
+    {
+        AttackBox.enabled = true;
     }
     /// <summary>
     /// 캐릭터가 슬라이딩을 함

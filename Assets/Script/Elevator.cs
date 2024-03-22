@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class Elevator : MonoBehaviour
 {
+    public enum Type
+    {
+        Type1,
+        Type2,
+        Type3,
+    }
+    public Type type;
     Vector2 movePostion;
     [SerializeField]bool isUp;
     [SerializeField]bool isDown;
@@ -13,7 +20,14 @@ public class Elevator : MonoBehaviour
     void Start()
     {
         //transform.position = new Vector2(7, -3.5f);
-        isUp = true;
+        if(type == Type.Type1 || type == Type.Type2)
+        {
+            isUp = true;
+        }
+        if(type == Type.Type3)
+        {
+            isDown = true;
+        }
     }
 
     void Update()
@@ -23,38 +37,113 @@ public class Elevator : MonoBehaviour
 
     private void moving()
     {
-        movePostion = transform.position;
-        if(isUp == true)
+        if(type == Type.Type1)
         {
-            movePostion += Vector2.up * Time.deltaTime;
-            if (movePostion.y >= 3.4f)
+            movePostion = transform.position;
+            if (isUp == true)
             {
-                movePostion.y = 3.4f;
-                timer += Time.deltaTime;
-                if (timer >= 2.5f)
+                movePostion += Vector2.up * Time.deltaTime;
+                if (movePostion.y >= 3.4f)
                 {
-                    timer = 0.0f;
-                    isUp = false;
-                    isDown = true;
+                    movePostion.y = 3.4f;
+                    timer += Time.deltaTime;
+                    if (timer >= 2.5f)
+                    {
+                        timer = 0.0f;
+                        isUp = false;
+                        isDown = true;
+                    }
                 }
             }
-        }
-        if(isDown == true)
-        {
-            movePostion += Vector2.down * Time.deltaTime;
-            if(movePostion.y <= -3.5f)
+            if (isDown == true)
             {
-                movePostion.y = -3.5f;
-                timer += Time.deltaTime;
-                if(timer >= 2.5f)
+                movePostion += Vector2.down * Time.deltaTime;
+                if (movePostion.y <= -3.5f)
                 {
-                    timer = 0.0f;
-                    isDown = false;
-                    isUp = true;
+                    movePostion.y = -3.5f;
+                    timer += Time.deltaTime;
+                    if (timer >= 2.5f)
+                    {
+                        timer = 0.0f;
+                        isDown = false;
+                        isUp = true;
+                    }
                 }
             }
+            transform.position = movePostion;
         }
-        transform.position = movePostion;
+
+        if(type == Type.Type2)
+        {
+            movePostion = transform.position;
+            if (isUp == true)
+            {
+                movePostion += Vector2.up * Time.deltaTime;
+                if (movePostion.y >= -5.5f)
+                {
+                    movePostion.y = -5.5f;
+                    timer += Time.deltaTime;
+                    if (timer >= 2.5f)
+                    {
+                        timer = 0.0f;
+                        isUp = false;
+                        isDown = true;
+                    }
+                }
+            }
+            if (isDown == true)
+            {
+                movePostion += Vector2.down * Time.deltaTime;
+                if (movePostion.y <= -12.5f)
+                {
+                    movePostion.y = -12.5f;
+                    timer += Time.deltaTime;
+                    if (timer >= 2.5f)
+                    {
+                        timer = 0.0f;
+                        isDown = false;
+                        isUp = true;
+                    }
+                }
+            }
+            transform.position = movePostion;
+        }
+
+        if(type == Type.Type3)
+        {
+            movePostion = transform.position;
+            if (isUp == true)
+            {
+                movePostion += Vector2.up * Time.deltaTime;
+                if (movePostion.y >= 3.5f)
+                {
+                    movePostion.y = 3.5f;
+                    timer += Time.deltaTime;
+                    if (timer >= 2.5f)
+                    {
+                        timer = 0.0f;
+                        isUp = false;
+                        isDown = true;
+                    }
+                }
+            }
+            if (isDown == true)
+            {
+                movePostion += Vector2.down * Time.deltaTime;
+                if (movePostion.y <= -7f)
+                {
+                    movePostion.y = -7f;
+                    timer += Time.deltaTime;
+                    if (timer >= 2.5f)
+                    {
+                        timer = 0.0f;
+                        isDown = false;
+                        isUp = true;
+                    }
+                }
+            }
+            transform.position = movePostion;
+        }
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {

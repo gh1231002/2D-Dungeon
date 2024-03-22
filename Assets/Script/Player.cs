@@ -256,16 +256,28 @@ public class Player : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.LeftControl))
         {
             isAttack = true;
-            AttackBox.enabled = true;
+            //공격 애니메이션에 맞춰서 공격판정박스를 키고 끔
+            Invoke("onAttackBox", 0.5f);
+            Invoke("offAttackBox", 1f);
         }
         else
         {
             isAttack = false;
         }
     }
-    private void AttackCooltime()
+    /// <summary>
+    /// 공격판정박스 킴
+    /// </summary>
+    private void onAttackBox()
     {
         AttackBox.enabled = true;
+    }
+    /// <summary>
+    /// 공격판정박스 끔
+    /// </summary>
+    private void offAttackBox()
+    {
+        AttackBox.enabled = false;
     }
     /// <summary>
     /// 캐릭터가 슬라이딩을 함

@@ -22,7 +22,6 @@ public class Player : MonoBehaviour
     bool isHurt = false;
     [SerializeField]bool isLadder = false;//»ç´Ù¸®
     [SerializeField] BoxCollider2D AttackBox;
-    float attackTimer = 0.0f;
 
     Camera cam;
     Animator anim;

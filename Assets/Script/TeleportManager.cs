@@ -31,26 +31,15 @@ public class TeleportManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.UpArrow) && Stage == StageType.GoTo2 && collider.gameObject.tag == "Player")
         {
-            SceneManager.LoadSceneAsync("Loading");
-            
+            LoadControl.LoadScene("Stage2");
         }
         if (Input.GetKeyDown(KeyCode.UpArrow) && Stage == StageType.GoTo1 && collider.gameObject.tag == "Player")
         {
-            SceneManager.LoadSceneAsync("Loading");
-            
+            LoadControl.LoadScene("Stage1");
         }
         if (Input.GetKeyDown(KeyCode.UpArrow) && Stage == StageType.GoToBoss && collider.gameObject.tag == "Player")
         {
-            SceneManager.LoadSceneAsync("Loading");
             
         }
     }
-    //private void goStage1()
-    //{
-    //    SceneManager.LoadSceneAsync("Stage1");
-    //}
-    //private void goStage2()
-    //{
-    //    SceneManager.LoadSceneAsync("Stage2");
-    //}
 }

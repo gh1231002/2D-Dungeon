@@ -34,6 +34,8 @@ public class Player : MonoBehaviour
     [SerializeField,Tooltip("슬라이딩 쿨타임")]float slideTimer = 0.0f;
     float slideTime = 0.0f;
 
+    public static Player instance;
+
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -109,6 +111,14 @@ public class Player : MonoBehaviour
         AttackBox.enabled = false;
         //transform.position = new Vector2(-18f, -2); //시작 위치
         playerCurHp = playerMaxHp;
+        if(instance == null)
+        {
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Start()
@@ -225,7 +235,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void checkGravity()
     {
-        if (isSlide == true || isEnter == true || isHurt == true || isLadder == true) return;
+        if (isSlide == true || isEnter == true || isHurt == true || isLadder == true || rigid.isKinematic == true) return;
         //isGround 가 false 일때 중력이 시간에 따라 증가함
         if(isGround == false)
         {

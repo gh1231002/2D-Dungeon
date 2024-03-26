@@ -11,12 +11,14 @@ public class LoadControl : MonoBehaviour
     public static void LoadScene(string sceneName)
     {
         nextScene = sceneName;
-        SceneManager.LoadScene("Loading");
+        //SceneManager.LoadScene("Loading");
+        SceneManager.LoadSceneAsync("Loading");
     }
     void Start()
     {
         StartCoroutine(LoadSceneProcess());
     }
+
     /// <summary>
     /// 로딩씬으로 들어왔을때 다음씬으로 가기위한 함수
     /// </summary>

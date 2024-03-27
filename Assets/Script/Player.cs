@@ -39,7 +39,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.tag == "Enemy")
+        if(collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "Trap")
         {
             isEnter = true;
             isHurt = true;
@@ -53,7 +53,7 @@ public class Player : MonoBehaviour
         if (collision.gameObject.tag == "Ladder")//사다리에 닿으면
         {
             gameObject.layer = LayerMask.NameToLayer("Ladder");
-            rigid.isKinematic = true;
+            rigid.bodyType = RigidbodyType2D.Kinematic;
         }
     }
 
@@ -62,7 +62,7 @@ public class Player : MonoBehaviour
         if (collision.gameObject.tag == "Ladder")
         {
             gameObject.layer = LayerMask.NameToLayer("Player");
-            rigid.isKinematic = false;
+            rigid.bodyType = RigidbodyType2D.Dynamic;
             isLadder = false;
         }
     }
@@ -113,9 +113,10 @@ public class Player : MonoBehaviour
         playerCurHp = playerMaxHp;
         if(instance == null)
         {
+            instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else
+        else if(instance != null)
         {
             Destroy(gameObject);
         }
@@ -224,7 +225,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void dojump()
     {
-        if (isSlide == true || isEnter == true || isHurt == true) return;
+        if (isSlide == true || isEnter == true || isHurt == true || isLadder == true) return;
         if (Input.GetKeyDown(KeyCode.Space) && isGround == true)//키를 눌렀을때 isground가 true라면
         {
             isJump = true;
@@ -235,7 +236,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void checkGravity()
     {
-        if (isSlide == true || isEnter == true || isHurt == true || isLadder == true || rigid.isKinematic == true) return;
+        if (isSlide == true || isEnter == true || isHurt == true || isLadder == true || rigid.bodyType == RigidbodyType2D.Static) return;
         //isGround 가 false 일때 중력이 시간에 따라 증가함
         if(isGround == false)
         {

@@ -31,7 +31,7 @@ public class TeleportManager : MonoBehaviour
 
     private void sceneLoadedAction(Scene scene, LoadSceneMode  loadMode)
     {
-        if (scene.name == "Stage2")
+        if(scene.name == "Stage2")
         { 
             Player player = FindAnyObjectByType<Player>();
             Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
@@ -39,10 +39,18 @@ public class TeleportManager : MonoBehaviour
 
             SceneManager.sceneLoaded -= sceneLoadedAction;
         }
-        else if(scene.name == "Stage1")
+        if(scene.name == "Stage1")
         {
             Player player = FindAnyObjectByType<Player>();
             Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
+            rigid.bodyType = RigidbodyType2D.Dynamic;
+
+            SceneManager.sceneLoaded -= sceneLoadedAction;
+        }
+        if(scene.name == "Boss")
+        {
+            Player player = FindAnyObjectByType<Player>();
+            Rigidbody2D rigid = player.GetComponent <Rigidbody2D>();
             rigid.bodyType = RigidbodyType2D.Dynamic;
 
             SceneManager.sceneLoaded -= sceneLoadedAction;
@@ -59,8 +67,6 @@ public class TeleportManager : MonoBehaviour
             obj = collider.gameObject.GetComponent<Rigidbody2D>();
             obj.bodyType = RigidbodyType2D.Static;//플레이어가 중력으로 인해 떨어지지 않게  변경, 위치 고정
             collider.transform.position = new Vector2(-27.89f, -0.14f);//Stage2 포탈위치
-            //이동 완료후 kinematic 해제
-
         }
         if (Input.GetKeyDown(KeyCode.G) && Stage == StageType.GoTo1 && collider.gameObject.tag == "Player")
         {
@@ -73,7 +79,12 @@ public class TeleportManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.G) && Stage == StageType.GoToBoss && collider.gameObject.tag == "Player")
         {
-            
+            SceneManager.sceneLoaded += sceneLoadedAction;
+
+            LoadControl.LoadScene("Boss");
+            obj = collider.gameObject.GetComponent <Rigidbody2D>();
+            obj.bodyType = RigidbodyType2D.Static;
+            collider.transform.position = new Vector2(-29.5f, -2.5f);//boss 포탈위치
         }
     }
 }

@@ -8,22 +8,33 @@ public class TeleportManager : MonoBehaviour
 {
     public enum StageType
     {
+        None,
         GoTo1,
-        GoTo2,
+        GoTo2Start,
+        GoTo2Fin,
         GoToBoss,
     }
 
     public StageType Stage;
     Collider2D _collision;
     Rigidbody2D obj;
-
-    private void OnTriggerStay2D(Collider2D collision)
+    bool isLoaded = false;
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.tag == "Player")
         {
             _collision = collision;
         }
     }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if(collision.gameObject.tag == "Player")
+        {
+            _collision = null;
+        }
+    }
+
     private void Update()
     {
         tpStage(_collision);
@@ -31,45 +42,50 @@ public class TeleportManager : MonoBehaviour
 
     private void sceneLoadedAction(Scene scene, LoadSceneMode  loadMode)
     {
-        if(scene.name == "Stage2")
+        if (scene.name == "Stage1")
+        {
+            Player player = FindAnyObjectByType<Player>();
+            Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
+            rigid.bodyType = RigidbodyType2D.Dynamic;
+            isLoaded = false;
+            SceneManager.sceneLoaded -= sceneLoadedAction;
+        }
+        if (scene.name == "Stage2")
         { 
             Player player = FindAnyObjectByType<Player>();
             Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
             rigid.bodyType = RigidbodyType2D.Dynamic;
-
+            isLoaded = false;
             SceneManager.sceneLoaded -= sceneLoadedAction;
         }
-        if(scene.name == "Stage1")
-        {
-            Player player = FindAnyObjectByType<Player>();
-            Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
-            rigid.bodyType = RigidbodyType2D.Dynamic;
-
-            SceneManager.sceneLoaded -= sceneLoadedAction;
-        }
-        if(scene.name == "Boss")
+        if(scene.name == "BossStage")
         {
             Player player = FindAnyObjectByType<Player>();
             Rigidbody2D rigid = player.GetComponent <Rigidbody2D>();
             rigid.bodyType = RigidbodyType2D.Dynamic;
-
+            isLoaded = false;
             SceneManager.sceneLoaded -= sceneLoadedAction;
         }
     }
 
     private void tpStage(Collider2D collider)
     {
-        if (Input.GetKeyDown(KeyCode.G) && Stage == StageType.GoTo2 && collider.gameObject.tag == "Player")
+        if (isLoaded == true) return;
+        if (_collision == null) return;
+
+        if (Input.GetKeyDown(KeyCode.G) && Stage == StageType.GoTo2Start && collider.gameObject.tag == "Player")
         {
+            isLoaded = true;
             SceneManager.sceneLoaded += sceneLoadedAction;
 
             LoadControl.LoadScene("Stage2");
             obj = collider.gameObject.GetComponent<Rigidbody2D>();
             obj.bodyType = RigidbodyType2D.Static;//플레이어가 중력으로 인해 떨어지지 않게  변경, 위치 고정
-            collider.transform.position = new Vector2(-27.89f, -0.14f);//Stage2 포탈위치
+            collider.transform.position = new Vector2(-27.89f, -0.14f);//Stage2 start 포탈위치
         }
         if (Input.GetKeyDown(KeyCode.G) && Stage == StageType.GoTo1 && collider.gameObject.tag == "Player")
         {
+            isLoaded = true;
             SceneManager.sceneLoaded += sceneLoadedAction;
 
             LoadControl.LoadScene("Stage1");
@@ -79,12 +95,23 @@ public class TeleportManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.G) && Stage == StageType.GoToBoss && collider.gameObject.tag == "Player")
         {
+            isLoaded = true;
             SceneManager.sceneLoaded += sceneLoadedAction;
 
-            LoadControl.LoadScene("Boss");
+            LoadControl.LoadScene("BossStage");
             obj = collider.gameObject.GetComponent <Rigidbody2D>();
             obj.bodyType = RigidbodyType2D.Static;
             collider.transform.position = new Vector2(-29.5f, -2.5f);//boss 포탈위치
+        }
+        if (Input.GetKeyDown(KeyCode.G) && Stage == StageType.GoTo2Fin && collider.gameObject.tag == "Player")
+        {
+            isLoaded = true;
+            SceneManager.sceneLoaded += sceneLoadedAction;
+
+            LoadControl.LoadScene("Stage2");
+            obj = collider.gameObject.GetComponent<Rigidbody2D>();
+            obj.bodyType = RigidbodyType2D.Static;
+            collider.transform.position = new Vector2(71.54f, -9.5f);//Stage2 fin 포탈위치
         }
     }
 }

@@ -338,4 +338,12 @@ public class Player : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// 플레이어 현재 Hp값을 return하는 함수
+    /// </summary>
+    /// <returns></returns>
+    public float RePlayerCurHp()
+    {
+        return playerCurHp;
+    }
 }

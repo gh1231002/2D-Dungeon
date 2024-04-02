@@ -28,6 +28,9 @@ public class LoadControl : MonoBehaviour
         AsyncOperation op = SceneManager.LoadSceneAsync(nextScene);
         op.allowSceneActivation = false;
 
+        GameObject obj = GameObject.Find("PlayerUi");
+        //obj.gameObject.SetActive(false);
+
         float timer = 0f;
 
         while (!op.isDone)
@@ -45,6 +48,7 @@ public class LoadControl : MonoBehaviour
                 {
                     yield return new WaitForSeconds(1f);
                     op.allowSceneActivation = true;
+                    //obj.gameObject.SetActive(true);
                     break;
                 }
             }

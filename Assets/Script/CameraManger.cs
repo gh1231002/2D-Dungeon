@@ -19,8 +19,8 @@ public class CameraManger : MonoBehaviour
     {
         if(player == null) return;
         //만약 virtualcamera의 follow가 없다면 player object를 찾아서 넣어준다.
-        player = FindAnyObjectByType<Player>();
-        Transform trsPlayer = player.GetComponent<Transform>();
+        GameObject obj = GameObject.Find("Player");
+        Transform trsPlayer = obj.GetComponent<Transform>();
         if (virCam.Follow == null)
         {
             virCam.Follow = trsPlayer.transform;

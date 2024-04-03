@@ -12,7 +12,7 @@ public class MainMenuManager : MonoBehaviour
     {
         start.onClick.AddListener(() =>
         {
-            LoadControl.LoadScene("stage1");
+            LoadControl.LoadScene("Stage1");
         });
         quit.onClick.AddListener(() =>
         {

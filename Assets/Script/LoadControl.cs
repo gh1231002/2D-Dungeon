@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class LoadControl : MonoBehaviour
 {
     static string nextScene;
+    Player player;
     [SerializeField]Image loadingBar;
     public static void LoadScene(string sceneName)
     {
@@ -16,6 +17,7 @@ public class LoadControl : MonoBehaviour
     }
     void Start()
     {
+        player = Player.instance;
         StartCoroutine(LoadSceneProcess());
     }
 
@@ -27,9 +29,11 @@ public class LoadControl : MonoBehaviour
     {
         AsyncOperation op = SceneManager.LoadSceneAsync(nextScene);
         op.allowSceneActivation = false;
-
-        GameObject obj = GameObject.Find("PlayerUi");
-        //obj.gameObject.SetActive(false);
+        //GameObject obj = GameObject.Find("PlayerUi");
+        //if (nextScene == "Stage1" || nextScene == "Stage2" || nextScene == "BossStage" || nextScene == "MainMenu")
+        //{
+        //    obj.gameObject.SetActive(false);
+        //}
 
         float timer = 0f;
 
@@ -47,8 +51,14 @@ public class LoadControl : MonoBehaviour
                 if(loadingBar.fillAmount >= 1f)
                 {
                     yield return new WaitForSeconds(1f);
+
                     op.allowSceneActivation = true;
-                    //obj.gameObject.SetActive(true);
+                    if (nextScene == "Stage1" || nextScene == "Stage2" || nextScene == "BossStage")
+                    {
+                        //obj.gameObject.SetActive(true);
+                        Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
+                        rigid.bodyType = RigidbodyType2D.Dynamic;
+                    }
                     break;
                 }
             }

@@ -51,6 +51,8 @@ public class UiManager : MonoBehaviour
         MainMenu.onClick.AddListener(() =>
         {
             LoadControl.LoadScene("MainMenu");
+            Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
+            rigid.bodyType = RigidbodyType2D.Static;
         });
     }
     private void Update()

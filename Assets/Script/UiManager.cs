@@ -15,8 +15,13 @@ public class UiManager : MonoBehaviour
     [SerializeField] Button MainMenu;
     [SerializeField] GameObject PausePanel;
     [SerializeField] float uiPlayerHp;
+
     Player player;
+    bool isOpen;
+    int curScene;
+
     public static UiManager instance;
+
     private void Awake()
     {
         if (instance == null)
@@ -33,30 +38,56 @@ public class UiManager : MonoBehaviour
     void Start()
     {
         player = Player.instance;
+        isOpen = false;
         btnDoit();
     }
-
+    /// <summary>
+    /// 마우스로 버튼 직접눌렀을때 작동
+    /// </summary>
     private void btnDoit()
     {
         Pause.onClick.AddListener(() =>
         {
             PausePanel.SetActive(true);
+            isOpen = true;
             Time.timeScale = 0.0f;
         });
         PauseExit.onClick.AddListener(() =>
         {
             PausePanel.SetActive(false);
+            isOpen = false;
             Time.timeScale = 1.0f;
         });
         MainMenu.onClick.AddListener(() =>
         {
             LoadControl.LoadScene("MainMenu");
+            PausePanel.SetActive(false);
             Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
-            rigid.bodyType = RigidbodyType2D.Static;
+            rigid.bodyType = RigidbodyType2D.Kinematic;
         });
+    }
+    /// <summary>
+    /// 특정키 입력시 패널을 끄고 킴
+    /// </summary>
+    private void onoffPanel()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape)&& isOpen == false)
+        {
+            PausePanel.SetActive(true);
+            isOpen = true;
+            Time.timeScale = 0.0f;
+        }
+       else if(Input.GetKeyDown(KeyCode.Escape) && isOpen == true)
+        {
+            PausePanel.SetActive(false);
+            isOpen = false;
+            Time.timeScale = 1.0f;
+        }
     }
     private void Update()
     {
+        //btnDoit();
+        onoffPanel();
         uiPlayerHp = player.RePlayerCurHp();
         switch (uiPlayerHp)
         {

@@ -155,5 +155,6 @@ public class Elevator : MonoBehaviour
     private void OnCollisionExit2D(Collision2D collision)
     {
         collision.gameObject.transform.SetParent(null);
+        DontDestroyOnLoad(collision.gameObject);
     }
 }

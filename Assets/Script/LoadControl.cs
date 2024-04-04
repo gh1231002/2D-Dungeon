@@ -8,6 +8,7 @@ public class LoadControl : MonoBehaviour
 {
     static string nextScene;
     Player player;
+    GameObject obj;
     [SerializeField]Image loadingBar;
     public static void LoadScene(string sceneName)
     {
@@ -18,9 +19,17 @@ public class LoadControl : MonoBehaviour
     void Start()
     {
         player = Player.instance;
-        StartCoroutine(LoadSceneProcess());
+        if(obj !=null)
+        {
+            obj = GameObject.Find("PlayerUi");
+            StartCoroutine(LoadSceneProcess());
+        }
+        else if(obj == null)
+        {
+            StartCoroutine(LoadSceneProcess2());
+        }
     }
-
+    
     /// <summary>
     /// 로딩씬으로 들어왔을때 다음씬으로 가기위한 함수
     /// </summary>
@@ -29,11 +38,11 @@ public class LoadControl : MonoBehaviour
     {
         AsyncOperation op = SceneManager.LoadSceneAsync(nextScene);
         op.allowSceneActivation = false;
-        //GameObject obj = GameObject.Find("PlayerUi");
-        //if (nextScene == "Stage1" || nextScene == "Stage2" || nextScene == "BossStage" || nextScene == "MainMenu")
-        //{
-        //    obj.gameObject.SetActive(false);
-        //}
+        
+        if (nextScene == "Stage1" || nextScene == "Stage2" || nextScene == "BossStage" || nextScene == "MainMenu")
+        {
+            obj.gameObject.SetActive(false);
+        }
 
         float timer = 0f;
 
@@ -55,10 +64,42 @@ public class LoadControl : MonoBehaviour
                     op.allowSceneActivation = true;
                     if (nextScene == "Stage1" || nextScene == "Stage2" || nextScene == "BossStage")
                     {
-                        //obj.gameObject.SetActive(true);
+                        obj.gameObject.SetActive(true);
                         Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
-                        rigid.bodyType = RigidbodyType2D.Dynamic;
+                        if (rigid.bodyType == RigidbodyType2D.Kinematic)
+                        {
+                            rigid.bodyType = RigidbodyType2D.Dynamic;
+                        }
                     }
+                    break;
+                }
+            }
+        }
+    }
+    IEnumerator LoadSceneProcess2()
+    {
+        AsyncOperation op = SceneManager.LoadSceneAsync(nextScene);
+        op.allowSceneActivation = false;
+
+        float timer = 0f;
+
+        while (!op.isDone)
+        {
+            yield return null;
+            if (op.progress < 0.9f)
+            {
+                loadingBar.fillAmount = op.progress;
+            }
+            else
+            {
+                timer += Time.unscaledDeltaTime;
+                loadingBar.fillAmount = Mathf.Lerp(0f, 1f, timer);
+                if (loadingBar.fillAmount >= 1f)
+                {
+                    yield return new WaitForSeconds(1f);
+
+                    op.allowSceneActivation = true;
+
                     break;
                 }
             }

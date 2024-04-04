@@ -109,14 +109,14 @@ public class Player : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         AttackBox.enabled = false;
-        //transform.position = new Vector2(-18f, -2); //Stage1 시작 위치
+        transform.position = new Vector2(-18f, -2); //Stage1 시작 위치
         playerCurHp = playerMaxHp;
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        else if(instance != null)
+        else if (instance != null)
         {
             Destroy(gameObject);
         }

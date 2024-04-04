@@ -46,7 +46,10 @@ public class TeleportManager : MonoBehaviour
         {
             Player player = FindAnyObjectByType<Player>();
             Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
-            rigid.bodyType = RigidbodyType2D.Dynamic;
+            if (rigid.bodyType == RigidbodyType2D.Static)
+            {
+                rigid.bodyType = RigidbodyType2D.Dynamic;
+            }
             isLoaded = false;
             SceneManager.sceneLoaded -= sceneLoadedAction;
         }
@@ -54,7 +57,10 @@ public class TeleportManager : MonoBehaviour
         { 
             Player player = FindAnyObjectByType<Player>();
             Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
-            rigid.bodyType = RigidbodyType2D.Dynamic;
+            if (rigid.bodyType == RigidbodyType2D.Static)
+            {
+                rigid.bodyType = RigidbodyType2D.Dynamic;
+            }
             isLoaded = false;
             SceneManager.sceneLoaded -= sceneLoadedAction;
         }
@@ -62,7 +68,10 @@ public class TeleportManager : MonoBehaviour
         {
             Player player = FindAnyObjectByType<Player>();
             Rigidbody2D rigid = player.GetComponent <Rigidbody2D>();
-            rigid.bodyType = RigidbodyType2D.Dynamic;
+            if (rigid.bodyType == RigidbodyType2D.Static)
+            {
+                rigid.bodyType = RigidbodyType2D.Dynamic;
+            }
             isLoaded = false;
             SceneManager.sceneLoaded -= sceneLoadedAction;
         }

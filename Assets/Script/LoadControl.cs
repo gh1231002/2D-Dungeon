@@ -7,8 +7,7 @@ using UnityEngine.UI;
 public class LoadControl : MonoBehaviour
 {
     static string nextScene;
-    Player player;
-    GameObject obj;
+    GameObject obj = null;
     [SerializeField]Image loadingBar;
     public static void LoadScene(string sceneName)
     {
@@ -16,22 +15,26 @@ public class LoadControl : MonoBehaviour
         //SceneManager.LoadScene("Loading");
         SceneManager.LoadSceneAsync("Loading");
     }
+
+    private void Awake()
+    {
+        obj = GameObject.Find("PlayerUi");
+    }
+
     void Start()
     {
-        player = Player.instance;
-        if(obj !=null)
+        if (obj != null)
         {
-            obj = GameObject.Find("PlayerUi");
             StartCoroutine(LoadSceneProcess());
         }
-        else if(obj == null)
+        else if (obj == null)
         {
             StartCoroutine(LoadSceneProcess2());
         }
     }
     
     /// <summary>
-    /// 로딩씬으로 들어왔을때 다음씬으로 가기위한 함수
+    /// Ui를 찾고 null이 아니라면 진행되는 로딩함수
     /// </summary>
     /// <returns></returns>
     IEnumerator LoadSceneProcess()
@@ -62,20 +65,23 @@ public class LoadControl : MonoBehaviour
                     yield return new WaitForSeconds(1f);
 
                     op.allowSceneActivation = true;
+
                     if (nextScene == "Stage1" || nextScene == "Stage2" || nextScene == "BossStage")
                     {
                         obj.gameObject.SetActive(true);
+                        Player player = FindAnyObjectByType<Player>();
                         Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
-                        if (rigid.bodyType == RigidbodyType2D.Kinematic)
-                        {
-                            rigid.bodyType = RigidbodyType2D.Dynamic;
-                        }
+                        rigid.bodyType = RigidbodyType2D.Dynamic;
                     }
                     break;
                 }
             }
         }
     }
+    /// <summary>
+    /// Ui가 null일때 진행되는 로딩함수
+    /// </summary>
+    /// <returns></returns>
     IEnumerator LoadSceneProcess2()
     {
         AsyncOperation op = SceneManager.LoadSceneAsync(nextScene);

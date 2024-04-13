@@ -331,7 +331,7 @@ public class Player : MonoBehaviour
         if (isEnter == true)
         {
             enterTimer += Time.deltaTime;
-            if (enterTimer >= 1.0f)
+            if (enterTimer >= 0.5f)
             {
                 enterTimer = 0.0f;
                 isEnter = false;

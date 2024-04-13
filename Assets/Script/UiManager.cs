@@ -13,12 +13,15 @@ public class UiManager : MonoBehaviour
     [SerializeField] Button Pause;
     [SerializeField] Button PauseExit;
     [SerializeField] Button MainMenu;
+    [SerializeField] Button Guide;
+    [SerializeField] Button GuideExit;
     [SerializeField] GameObject PausePanel;
+    [SerializeField] GameObject GuidePanel;
     [SerializeField] float uiPlayerHp;
 
     Player player;
     bool isOpen;
-    int curScene;
+    bool guideOpen;
 
     public static UiManager instance;
 
@@ -34,11 +37,13 @@ public class UiManager : MonoBehaviour
             Destroy(gameObject);
         }
         PausePanel.SetActive(false);
+        GuidePanel.SetActive(false);
     }
     void Start()
     {
         player = Player.instance;
         isOpen = false;
+        guideOpen = false;
         btnDoit();
     }
     /// <summary>
@@ -62,8 +67,21 @@ public class UiManager : MonoBehaviour
         {
             LoadControl.LoadScene("MainMenu");
             PausePanel.SetActive(false);
+            Time.timeScale = 1.0f;
             Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
-            rigid.bodyType = RigidbodyType2D.Kinematic;
+            rigid.bodyType = RigidbodyType2D.Static;
+        });
+        Guide.onClick.AddListener(() =>
+        {
+            GuidePanel.SetActive(true);
+            guideOpen = true;
+            Time.timeScale = 0f;
+        });
+        GuideExit.onClick.AddListener(() =>
+        {
+            GuidePanel.SetActive(false);
+            guideOpen = false;
+            Time.timeScale = 1.0f;
         });
     }
     /// <summary>
@@ -71,7 +89,8 @@ public class UiManager : MonoBehaviour
     /// </summary>
     private void onoffPanel()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)&& isOpen == false)
+        if (guideOpen == true) return;
+        if (Input.GetKeyDown(KeyCode.Escape) && isOpen == false)
         {
             PausePanel.SetActive(true);
             isOpen = true;
@@ -84,10 +103,30 @@ public class UiManager : MonoBehaviour
             Time.timeScale = 1.0f;
         }
     }
+    /// <summary>
+    /// 특정키 입력시 가이드 크고 끔
+    /// </summary>
+    private void guideOnOff()
+    {
+        if(isOpen == true) return;
+        if (Input.GetKeyDown(KeyCode.F1) && guideOpen == false)
+        {
+            GuidePanel.SetActive(true);
+            guideOpen = true;
+            Time.timeScale = 0.0f;
+        }
+        else if( Input.GetKeyDown(KeyCode.Escape) && guideOpen == true)
+        {
+            GuidePanel.SetActive(false);
+            guideOpen = false;
+            Time.timeScale = 1.0f;
+        }
+    }
     private void Update()
     {
         //btnDoit();
         onoffPanel();
+        guideOnOff();
         uiPlayerHp = player.RePlayerCurHp();
         switch (uiPlayerHp)
         {

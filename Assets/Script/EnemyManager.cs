@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,12 +16,16 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] float moveSpeed = 0f;
     [SerializeField] Collider2D Range;
     [SerializeField] LayerMask layerEnemy;
+    [SerializeField] LayerMask layerGround;
+    [SerializeField] LayerMask layerPlayer;
     Animator anim;
     bool isDeath = false;
     bool isHurt = false;
     bool isEnter = false;
+    bool isAttack = false;
     float timer = 0.0f;
     float moveTimer = 0.0f;
+    float attackTimer = 0.0f;
     private Vector2 scale;
 
 
@@ -61,11 +66,6 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    private void offHurt()
-    {
-        isHurt = false;
-    }
-
     private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
@@ -78,7 +78,7 @@ public class EnemyManager : MonoBehaviour
         {
             rigid.bodyType = RigidbodyType2D.Kinematic;
         }
-        if (scale.x == -1)
+        if(scale.x == -1)
         {
             moveSpeed *= -1;
         }
@@ -96,6 +96,10 @@ public class EnemyManager : MonoBehaviour
     {
         if (type == EnemyType.Ex) return;
         if(Range.IsTouchingLayers(layerEnemy) == true && type != EnemyType.Boss)
+        {
+            turn();
+        }
+        if(Range.IsTouchingLayers(layerGround) == false && type != EnemyType.Boss)
         {
             turn();
         }
@@ -117,6 +121,11 @@ public class EnemyManager : MonoBehaviour
         rigid.AddForce(dir * enterForce, ForceMode2D.Impulse);
 
         Invoke("offHurt", 0.5f);
+    }
+
+    private void offHurt()
+    {
+        isHurt = false;
     }
 
     public void Hit(float _damage)
@@ -162,6 +171,7 @@ public class EnemyManager : MonoBehaviour
 
     private void move()
     {
+        if (isHurt == true) return;
         rigid.velocity = new Vector2(moveSpeed, rigid.velocity.y);
         moveTimer += Time.deltaTime;
         if (moveTimer > 5.0f)

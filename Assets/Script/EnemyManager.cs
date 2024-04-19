@@ -14,7 +14,7 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] float MaxHp = 0f;
     [SerializeField] float CurHp = 0f;
     [SerializeField] float moveSpeed = 0f;
-    [SerializeField] Collider2D Range;
+    [SerializeField] BoxCollider2D Range;
     [SerializeField] LayerMask layerEnemy;
     [SerializeField] LayerMask layerGround;
     [SerializeField] LayerMask layerPlayer;
@@ -22,10 +22,9 @@ public class EnemyManager : MonoBehaviour
     bool isDeath = false;
     bool isHurt = false;
     bool isEnter = false;
-    bool isAttack = false;
+    bool Attack1 = false;
     float timer = 0.0f;
     float moveTimer = 0.0f;
-    float attackTimer = 0.0f;
     private Vector2 scale;
 
 
@@ -86,7 +85,7 @@ public class EnemyManager : MonoBehaviour
 
     private void Update()
     {
-        if (type == EnemyType.Ex || isDeath == true) return;
+        if (type == EnemyType.Ex || isDeath == true || isHurt == true) return;
         doAni();
         enterCooltime();
         move();
@@ -103,12 +102,25 @@ public class EnemyManager : MonoBehaviour
         {
             turn();
         }
+        atk1();
+    }
+
+    private void atk1()
+    {
+        if(Range.IsTouchingLayers(layerPlayer) == true && type != EnemyType.Boss)
+        {
+            Attack1 = true;
+        }
+        if(Range.IsTouchingLayers(layerPlayer) == false && type != EnemyType.Boss)
+        {
+            Attack1 = false;
+        }
     }
 
     private void doAni()
     {
-        anim.SetBool("Hurt", isHurt);
         anim.SetInteger("Move", (int)moveSpeed);
+        anim.SetBool("Attack1", Attack1);
     }
 
     private void hitDamaged(Vector2 _target)
@@ -131,11 +143,9 @@ public class EnemyManager : MonoBehaviour
     public void Hit(float _damage)
     {
         CurHp -= _damage;
-        if (type == EnemyType.Ex)
-        {
-            sr.color = new Color(1f, 0f, 0f, 1f);
-            Invoke("offHit", 0.3f);
-        } 
+
+        sr.color = new Color(1f, 0f, 0f, 1f);
+        Invoke("offHit", 0.3f);
 
         if(CurHp <= 0f)
         {
@@ -171,10 +181,9 @@ public class EnemyManager : MonoBehaviour
 
     private void move()
     {
-        if (isHurt == true) return;
         rigid.velocity = new Vector2(moveSpeed, rigid.velocity.y);
         moveTimer += Time.deltaTime;
-        if (moveTimer > 5.0f)
+        if (moveTimer > 3.0f)
         {
             turn();
             moveTimer = 0.0f;

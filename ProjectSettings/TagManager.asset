@@ -9,6 +9,7 @@ TagManager:
   - Ladder
   - Trap
   - PBox
+  - EBox
   layers:
   - Default
   - TransparentFX

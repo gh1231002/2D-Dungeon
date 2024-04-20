@@ -55,6 +55,14 @@ public class Player : MonoBehaviour
             gameObject.layer = LayerMask.NameToLayer("Ladder");
             rigid.bodyType = RigidbodyType2D.Kinematic;
         }
+        if(collision.gameObject.tag == "EBox")
+        {
+            isEnter = true;
+            isHurt = true;
+            Hit(1);
+            Vector2 target = collision.transform.position;
+            onDamaged(target);
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)

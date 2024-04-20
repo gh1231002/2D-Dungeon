@@ -14,23 +14,27 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] float MaxHp = 0f;
     [SerializeField] float CurHp = 0f;
     [SerializeField] float moveSpeed = 0f;
-    [SerializeField] BoxCollider2D Range;
+    [SerializeField] Collider2D Range;
     [SerializeField] LayerMask layerEnemy;
     [SerializeField] LayerMask layerGround;
     [SerializeField] LayerMask layerPlayer;
+    [SerializeField] Collider2D AtkBox1;
+    [SerializeField] Collider2D AtkBox2;
     Animator anim;
-    bool isDeath = false;
+    [SerializeField]bool isDeath = false;
     bool isHurt = false;
     bool isEnter = false;
     bool Attack1 = false;
+    bool Attack2 = false;
     float timer = 0.0f;
     float moveTimer = 0.0f;
+    float attackTimer = 0.0f;
+    [SerializeField]int attackNum = 0;
     private Vector2 scale;
 
 
     public enum EnemyType
     {
-        Ex,
         MushRoom,
         Skeleton,
         Goblin,
@@ -73,10 +77,8 @@ public class EnemyManager : MonoBehaviour
         sprDefault = sr.sprite;
         CurHp = MaxHp;
         scale = transform.localScale;
-        if (type == EnemyType.Ex)
-        {
-            rigid.bodyType = RigidbodyType2D.Kinematic;
-        }
+        AtkBox1.enabled = false;
+        AtkBox2.enabled = false;
         if(scale.x == -1)
         {
             moveSpeed *= -1;
@@ -85,16 +87,18 @@ public class EnemyManager : MonoBehaviour
 
     private void Update()
     {
-        if (type == EnemyType.Ex || isDeath == true || isHurt == true) return;
+        if (isDeath == true || isHurt == true) return;
         doAni();
         enterCooltime();
         move();
+        atkNum();
     }
 
     private void FixedUpdate()
     {
-        if (type == EnemyType.Ex) return;
-        if(Range.IsTouchingLayers(layerEnemy) == true && type != EnemyType.Boss)
+        if (isDeath == true) return;
+
+        if (Range.IsTouchingLayers(layerEnemy) == true && type != EnemyType.Boss)
         {
             turn();
         }
@@ -102,31 +106,57 @@ public class EnemyManager : MonoBehaviour
         {
             turn();
         }
-        atk1();
-    }
 
-    private void atk1()
-    {
-        if(Range.IsTouchingLayers(layerPlayer) == true && type != EnemyType.Boss)
+        if (Range.IsTouchingLayers(layerPlayer) == true && type != EnemyType.Boss && attackNum == 0)
         {
+            rigid.velocity = Vector3.zero;
             Attack1 = true;
+            Invoke("onBox1", 0.5f);
+            Invoke("offBox1", 0.7f);
         }
-        if(Range.IsTouchingLayers(layerPlayer) == false && type != EnemyType.Boss)
+        else if (Range.IsTouchingLayers(layerPlayer) == false && type != EnemyType.Boss)
         {
             Attack1 = false;
         }
+        if (Range.IsTouchingLayers(layerPlayer) == true && type != EnemyType.Boss && attackNum == 1)
+        {
+            rigid.velocity = Vector2.zero;
+            Attack2 = true;
+            Invoke("onBox1", 0.5f);
+            Invoke("offBox1", 0.7f);
+        }
+        else if (Range.IsTouchingLayers(layerPlayer) == false && type != EnemyType.Boss)
+        {
+            Attack2 = false;
+        }
+    }
+
+    private void onBox1()
+    {
+        AtkBox1.enabled = true;
+    }
+    private void onBox2()
+    {
+        AtkBox2.enabled = true;
+    }
+    private void offBox1()
+    {
+        AtkBox1.enabled = false;
+    }
+    private void offBox2()
+    {
+        AtkBox2.enabled = false;
     }
 
     private void doAni()
     {
-        anim.SetInteger("Move", (int)moveSpeed);
-        anim.SetBool("Attack1", Attack1);
+            anim.SetInteger("Move", (int)moveSpeed);
+            anim.SetBool("Attack1", Attack1);
+            anim.SetBool("Attack2", Attack2);
     }
 
     private void hitDamaged(Vector2 _target)
     {
-        if (type == EnemyType.Ex) return;
-
         Vector2 curPos = transform.position;
         Vector2 dir = curPos - _target;
         dir.Normalize();
@@ -149,15 +179,8 @@ public class EnemyManager : MonoBehaviour
 
         if(CurHp <= 0f)
         {
-            if(type != EnemyType.Ex)
-            {
-                isDeath = true;
-                anim.Play("Death");
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
+            isDeath = true;
+            anim.Play("Death");
         }
     }
 
@@ -183,10 +206,20 @@ public class EnemyManager : MonoBehaviour
     {
         rigid.velocity = new Vector2(moveSpeed, rigid.velocity.y);
         moveTimer += Time.deltaTime;
-        if (moveTimer > 3.0f)
+        if (moveTimer > 4.0f)
         {
             turn();
             moveTimer = 0.0f;
+        }
+    }
+
+    private void atkNum()
+    {
+        attackTimer += Time.deltaTime;
+        if(attackTimer >= 5.0f)
+        {
+            attackNum = Random.Range(0, 2);
+            attackTimer = 0.0f;
         }
     }
 

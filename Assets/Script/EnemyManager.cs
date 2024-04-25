@@ -39,7 +39,7 @@ public class EnemyManager : MonoBehaviour
         Skeleton,
         Goblin,
         Flyingeye,
-        Boss,
+        M_Boss,
     }
 
     public EnemyType type;
@@ -98,34 +98,57 @@ public class EnemyManager : MonoBehaviour
     {
         if (isDeath == true) return;
 
-        if (Range.IsTouchingLayers(layerEnemy) == true && type != EnemyType.Boss)
+        if (Range.IsTouchingLayers(layerEnemy) == true)
         {
             turn();
         }
-        if(Range.IsTouchingLayers(layerGround) == false && type != EnemyType.Boss)
+        if(Range.IsTouchingLayers(layerGround) == false)
         {
             turn();
         }
 
-        if (Range.IsTouchingLayers(layerPlayer) == true && type != EnemyType.Boss && attackNum == 0)
+        if (Range.IsTouchingLayers(layerPlayer) == true && attackNum == 0 && type != EnemyType.M_Boss)
         {
             rigid.velocity = Vector3.zero;
             Attack1 = true;
             Invoke("onBox1", 0.5f);
             Invoke("offBox1", 0.7f);
         }
-        else if (Range.IsTouchingLayers(layerPlayer) == false && type != EnemyType.Boss)
+        else if (Range.IsTouchingLayers(layerPlayer) == false && type != EnemyType.M_Boss)
         {
             Attack1 = false;
         }
-        if (Range.IsTouchingLayers(layerPlayer) == true && type != EnemyType.Boss && attackNum == 1)
+        if (Range.IsTouchingLayers(layerPlayer) == true && attackNum == 1 && type != EnemyType.M_Boss)
         {
             rigid.velocity = Vector2.zero;
             Attack2 = true;
             Invoke("onBox1", 0.5f);
             Invoke("offBox1", 0.7f);
         }
-        else if (Range.IsTouchingLayers(layerPlayer) == false && type != EnemyType.Boss)
+        else if (Range.IsTouchingLayers(layerPlayer) == false && type != EnemyType.M_Boss)
+        {
+            Attack2 = false;
+        }
+
+        if (Range.IsTouchingLayers(layerPlayer) == true && attackNum == 0 && type == EnemyType.M_Boss)
+        {
+            rigid.velocity = Vector3.zero;
+            Attack1 = true;
+            Invoke("onBox1", 0.4f);
+            Invoke("offBox1", 0.5f);
+        }
+        else if (Range.IsTouchingLayers(layerPlayer) == false && type == EnemyType.M_Boss)
+        {
+            Attack1 = false;
+        }
+        if (Range.IsTouchingLayers(layerPlayer) == true && attackNum == 1 && type == EnemyType.M_Boss)
+        {
+            rigid.velocity = Vector2.zero;
+            Attack2 = true;
+            Invoke("onBox1", 0.4f);
+            Invoke("offBox1", 0.5f);
+        }
+        else if (Range.IsTouchingLayers(layerPlayer) == false && type == EnemyType.M_Boss)
         {
             Attack2 = false;
         }
@@ -150,9 +173,9 @@ public class EnemyManager : MonoBehaviour
 
     private void doAni()
     {
-            anim.SetInteger("Move", (int)moveSpeed);
-            anim.SetBool("Attack1", Attack1);
-            anim.SetBool("Attack2", Attack2);
+        anim.SetInteger("Move", (int)moveSpeed);
+        anim.SetBool("Attack1", Attack1);
+        anim.SetBool("Attack2", Attack2);
     }
 
     private void hitDamaged(Vector2 _target)

@@ -63,6 +63,14 @@ public class Player : MonoBehaviour
             Vector2 target = collision.transform.position;
             onDamaged(target);
         }
+        if(collision.gameObject.tag == "Enemy")
+        {
+            isEnter = true;
+            isHurt = true;
+            Hit(1);
+            Vector2 target = collision.transform.position;
+            onDamaged(target);
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)

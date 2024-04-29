@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class BossManager : MonoBehaviour
 {
+    [Header("보스 스텟")]
     [SerializeField] private float maxHp = 0.0f;
     [SerializeField] private float curHp = 0.0f;
     [SerializeField] private float moveSpeed = 0.0f;
@@ -29,6 +30,12 @@ public class BossManager : MonoBehaviour
     bool isMeet = false;
     float AttackTimer = 0.0f;
     [SerializeField]int AttackNum = 0;
+
+    [Header("보스Ui")]
+    [SerializeField] Slider slider;
+    [SerializeField] Image sliderFillImage;
+    [SerializeField] GameObject BossUi;
+
 
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -71,16 +78,18 @@ public class BossManager : MonoBehaviour
         AtkBox.enabled = false;
         curHp = maxHp;
         moveSpeed *= -1;
+        BossUi.SetActive(false);
     }
 
     public void Hit(float _damage)
     {
         curHp -= _damage;
-
+        SetBossHp(curHp, maxHp);
         if (curHp <= 0f)
         {
             isDeath = true;
             anim.Play("Death");
+            BossUi.SetActive(false);
         }
     }
 
@@ -91,6 +100,7 @@ public class BossManager : MonoBehaviour
         move();
         doAni();
         ranAtk();
+        onOffUi();
     }
 
     private void move()
@@ -141,6 +151,25 @@ public class BossManager : MonoBehaviour
             AttackNum = Random.Range(0, 2);
             AttackTimer = 0.0f;
         }
+    }
+
+    private void onOffUi()
+    {
+        if(isMeet == true)
+        {
+            BossUi.SetActive(true);
+            SetBossHp(curHp, maxHp);
+        }
+    }
+
+    private void SetBossHp(float _curHp, float _maxHp)
+    {
+        if(slider.maxValue != _maxHp)
+        {
+            slider.maxValue = _maxHp;
+        }
+
+        slider.value = _curHp;
     }
 
     private void FixedUpdate()

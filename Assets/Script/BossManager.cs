@@ -26,10 +26,13 @@ public class BossManager : MonoBehaviour
     bool isDeath = false;
     bool isHurt = false;
     bool Attack1 = false;
-    bool Attack2 = false;
+    [SerializeField]bool Attack2 = false;
     bool isMeet = false;
     float AttackTimer = 0.0f;
+    float ReloadTimer = 0.0f;
+    float moveTimer = 0.0f;
     [SerializeField]int AttackNum = 0;
+    private Vector2 scale;
 
     [Header("º¸½ºUi")]
     [SerializeField] Slider slider;
@@ -75,10 +78,11 @@ public class BossManager : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody2D>();
+        BossUi.SetActive(false);
         AtkBox.enabled = false;
+        scale = transform.localScale;
         curHp = maxHp;
         moveSpeed *= -1;
-        BossUi.SetActive(false);
     }
 
     public void Hit(float _damage)
@@ -97,7 +101,8 @@ public class BossManager : MonoBehaviour
     {
         if (isMeet != true) return;
         if (isDeath == true)return;
-        move();
+        //move();
+        move2();
         doAni();
         ranAtk();
         onOffUi();
@@ -105,7 +110,7 @@ public class BossManager : MonoBehaviour
 
     private void move()
     {
-        if(isHurt == true)return;
+        if(isHurt == true || AttackNum == 1)return;
         GameObject objPlayer = GameObject.Find("Player");
         Player player = objPlayer.GetComponent<Player>();
         Vector3 playerPos = player.transform.position;
@@ -135,6 +140,24 @@ public class BossManager : MonoBehaviour
         }
         rigid.velocity = new Vector2(moveSpeed * moveDir, rigid.velocity.y);
     }
+
+    private void move2()
+    {
+        if (isHurt == true) return;
+        moveTimer += Time.deltaTime;
+        rigid.velocity = new Vector2(moveSpeed, rigid.velocity.y);
+        if (moveTimer > 7.0f)
+        {
+            turn();
+            moveTimer = 0.0f;
+        }
+    }
+    private void turn()
+    {
+        scale.x *= -1;
+        transform.localScale = scale;
+        moveSpeed *= -1;
+    }
     private void doAni()
     {
         anim.SetBool("Hurt", isHurt);
@@ -146,10 +169,10 @@ public class BossManager : MonoBehaviour
     private void ranAtk()
     {
         AttackTimer += Time.deltaTime;
-        if(AttackTimer >= 6.0f)
+        if(AttackTimer >= 10.0f)
         {
-            AttackNum = Random.Range(0, 2);
             AttackTimer = 0.0f;
+            AttackNum = Random.Range(0, 2);
         }
     }
 
@@ -159,6 +182,26 @@ public class BossManager : MonoBehaviour
         {
             BossUi.SetActive(true);
             SetBossHp(curHp, maxHp);
+        }
+    }
+
+    private void Atkspell()
+    {
+        ReloadTimer += Time.deltaTime;
+        if(AttackNum == 1)
+        {
+            rigid.velocity = Vector2.zero;
+            Attack2 = true;
+            if (ReloadTimer >= 1.0f)
+            {
+                ReloadTimer = 0.0f;
+                posSpell();
+                if (SpellCount >= SpellLimit)
+                {
+                    SpellCount = 0;
+                    Attack2 = false;
+                }
+            }
         }
     }
 
@@ -174,14 +217,14 @@ public class BossManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isDeath == true) return;
+        if (isDeath == true || isHurt == true) return;
 
         if (meetRange.IsTouchingLayers(layerPlayer) == true)
         {
             isMeet = true;
         }
 
-        if(Range.IsTouchingLayers(layerPlayer) == true && AttackNum == 0)
+        if(Range.IsTouchingLayers(layerPlayer) == true)
         {
             rigid.velocity = Vector2.zero;
             Attack1 = true;
@@ -192,19 +235,7 @@ public class BossManager : MonoBehaviour
         {
             Attack1 = false;
         }
-
-        if (meetRange.IsTouchingLayers(layerPlayer) == true && Range.IsTouchingLayers(layerPlayer) == false && AttackNum == 1)
-        {
-            rigid.velocity = Vector2.zero;
-            Attack2 = true;
-            posSpell();
-            if (SpellCount >= SpellLimit)
-            {
-                SpellCount = 0;
-                Attack2 = false;
-                AttackNum = Random.Range(0, 2);
-            }
-        }
+        Atkspell();
     }
 
     private void createSpell(GameObject _obj, Vector3 _pos, Vector3 _rot)
@@ -217,9 +248,7 @@ public class BossManager : MonoBehaviour
         GameObject objPlayer = GameObject.Find("Player");
         Player player = objPlayer.GetComponent<Player>();
         Vector3 playerPos = player.transform.position;
-        //createSpell(objSpell, playerPos + new Vector3(-3,3,0), Vector3.zero);
-        createSpell(objSpell, playerPos + new Vector3(0,3,0), Vector3.zero);
-        //createSpell(objSpell, playerPos + new Vector3(3,3,0), Vector3.zero);
+        createSpell(objSpell, playerPos + new Vector3(0, 3, 0), Vector3.zero);
         SpellCount++;
     }
 

@@ -39,23 +39,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "Trap")
-        {
-            isEnter = true;
-            isHurt = true;
-            Vector2 target = collision.transform.position;
-            onDamaged(target);
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "Ladder")//사다리에 닿으면
-        {
-            gameObject.layer = LayerMask.NameToLayer("Ladder");
-            rigid.bodyType = RigidbodyType2D.Kinematic;
-        }
-        if(collision.gameObject.tag == "EBox")
+        if(collision.gameObject.tag == "Trap")//함정에 부딪히면
         {
             isEnter = true;
             isHurt = true;
@@ -63,7 +47,31 @@ public class Player : MonoBehaviour
             Vector2 target = collision.transform.position;
             onDamaged(target);
         }
-        if(collision.gameObject.tag == "Enemy")
+        if(collision.gameObject.tag == "Enemy")//몬스터와 부딪힌다면
+        {
+            isEnter = true;
+            isHurt = true;
+            Vector2 target = collision.transform.position;
+            onDamaged(target);
+        }
+        if( collision.gameObject.tag == "Spell")//spell공격에 맞으면
+        {
+            isEnter = true;
+            isHurt = true;
+            Hit(1);
+            Vector2 target = collision.transform.position;
+            onDamaged(target);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "Ladder")//사다리에 닿으면 layer가 변경되고 rigid바디타입도 변경
+        {
+            gameObject.layer = LayerMask.NameToLayer("Ladder");
+            rigid.bodyType = RigidbodyType2D.Kinematic;
+        }
+        if(collision.gameObject.tag == "EBox")//적의 공격을 맞으면
         {
             isEnter = true;
             isHurt = true;
@@ -75,7 +83,7 @@ public class Player : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Ladder")
+        if (collision.gameObject.tag == "Ladder")//사다리에서 벗어나면 원래대로 변경
         {
             gameObject.layer = LayerMask.NameToLayer("Player");
             rigid.bodyType = RigidbodyType2D.Dynamic;
@@ -111,7 +119,7 @@ public class Player : MonoBehaviour
     public void Hit(float _damage)
     {
         playerCurHp -= _damage;
-        if (playerCurHp <= 0)
+        if (playerCurHp <= 0f)
         {
             isDeath = true;
             anim.Play("Death");

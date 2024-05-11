@@ -239,10 +239,10 @@ public class EnemyManager : MonoBehaviour
     private void atkNum()
     {
         attackTimer += Time.deltaTime;
-        if(attackTimer >= 5.0f)
+        if(attackTimer >= 10.0f)
         {
-            attackNum = Random.Range(0, 2);
             attackTimer = 0.0f;
+            attackNum = Random.Range(0, 2);
         }
     }
 

@@ -38,7 +38,7 @@ Transform:
   - {fileID: 4541093385251534509}
   - {fileID: 8106106557162490167}
   m_Father: {fileID: 0}
-  m_RootOrder: 27
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5948047957941725284
 SpriteRenderer:
@@ -104,8 +104,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 641e78fc83684d3458147701f16213f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enterForce: 2
-  MaxHp: 10
+  enterForce: 3
+  MaxHp: 7
   CurHp: 0
   moveSpeed: 1.5
   Range: {fileID: 7833395768625509596}
@@ -407,7 +407,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8452670140606703961}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.73, y: 0.18, z: 0}
+  m_LocalPosition: {x: 0.77, y: 0.18, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

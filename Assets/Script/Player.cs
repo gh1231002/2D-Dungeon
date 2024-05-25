@@ -28,6 +28,7 @@ public class Player : MonoBehaviour
     Rigidbody2D rigid;
     BoxCollider2D boxCollider;
     Vector3 moveDir; //플레이어 이동값
+    bool isDebug = false;//디버그 모드 작동중인지
 
     [Header("슬라이드")]
     bool isSlide = false;//대쉬하는중인지
@@ -35,6 +36,8 @@ public class Player : MonoBehaviour
     float slideTime = 0.0f;
 
     public static Player instance;
+
+    UiManager uiManager;
 
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -118,6 +121,8 @@ public class Player : MonoBehaviour
 
     public void Hit(float _damage)
     {
+        if (isDebug == true) return;
+
         playerCurHp -= _damage;
         if (playerCurHp <= 0f)
         {
@@ -133,7 +138,7 @@ public class Player : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         AttackBox.enabled = false;
-        //transform.position = new Vector2(-18f, -2); //Stage1 시작 위치
+        transform.position = new Vector2(-18f, -2f); //Stage1 시작 위치
         playerCurHp = playerMaxHp;
         if (instance == null)
         {
@@ -149,11 +154,13 @@ public class Player : MonoBehaviour
     void Start()
     {
         cam = Camera.main;
+        uiManager = UiManager.instance;
     }
 
     void Update()
     {
         if (isDeath == true) return;
+        isDebug = uiManager.DebugModeOnOff();
         move();
         doLadder();
         climingLadder();

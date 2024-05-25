@@ -94,12 +94,16 @@ public class LoadControl : MonoBehaviour
                     obj.gameObject.SetActive(true);
                     objPlayer.gameObject.SetActive(true);
 
-                    if (nextScene != "Loading")
+                    if (nextScene == "Loading" || nextScene == "MainMenu")
+                    {
+                        Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
+                        rigid.bodyType = RigidbodyType2D.Static;
+                    }
+                    else
                     {
                         Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
                         rigid.bodyType = RigidbodyType2D.Dynamic;
                     }
-
                     break;
                 }
             }

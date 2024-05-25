@@ -20,8 +20,10 @@ public class BossManager : MonoBehaviour
     [Header("보스 패턴 관련")]
     [SerializeField] private Collider2D Range;
     [SerializeField] private Collider2D AtkBox;
+    [SerializeField] private Collider2D turnRange;
     [SerializeField] private Collider2D meetRange;
     [SerializeField] private LayerMask layerPlayer;
+    [SerializeField] private LayerMask layerGround;
     [SerializeField] private GameObject objSpell;
     [SerializeField] private Transform trsSpell;
     [SerializeField,Tooltip("cast공격하는 횟수")] private int SpellLimit = 0;
@@ -33,7 +35,7 @@ public class BossManager : MonoBehaviour
     bool isMeet = false;//보스가 있는 스테이지안에 플레이어가 들어왔는지
     float spellTimer = 0.0f;//일정시간 지난후 cast공격
     float reloadTimer = 0.0f;//cast공격간의 쿨타임
-    float moveTimer = 0.0f;
+    float rushTimer = 0.0f;//돌진 쿨타임
     int onSpell = 0;
     float phase1 = 0;
     float phase2 = 0;
@@ -112,7 +114,6 @@ public class BossManager : MonoBehaviour
         move2();
         doAni();
         onOffUi();
-        phasePattern();
         onOffSpell();
     }
     /// <summary>
@@ -151,18 +152,17 @@ public class BossManager : MonoBehaviour
     //    rigid.velocity = new Vector2(moveSpeed * moveDir, rigid.velocity.y);
     //}
     /// <summary>
-    /// 일정시간마다 좌우 움직임이 바뀌는 함수
+    /// 범위안에 벽이 닿는다면 반대방향으로 이동
     /// </summary>
     private void move2()
     {
         if (isHurt == true) return;
-        moveTimer += Time.deltaTime;
+
         rigid.velocity = new Vector2(moveSpeed, rigid.velocity.y);
 
-        if (moveTimer >= 7.0f)
+        if(turnRange.IsTouchingLayers(layerGround) == true)
         {
             turn();
-            moveTimer = 0.0f;
         }
     }
     private void turn()
@@ -265,7 +265,11 @@ public class BossManager : MonoBehaviour
             reloadTimer += Time.deltaTime;//spell마다 쿨타임을 주기위한 시간값
             if (onSpell == 1)//설정한 초마다 onspell이 1로 바뀔것임
             {
+                //돌진패턴이 실행중이면 작동안함
+                if (isRush == true) return;
+
                 Attack2 = true;//두번째 공격 실행
+
                 if (reloadTimer >= 1.0f)
                 {
                     reloadTimer = 0.0f;
@@ -282,42 +286,46 @@ public class BossManager : MonoBehaviour
             {
                 rigid.velocity = Vector2.zero;
             }
-            //플레이어와 거리가 너무 멀어지면 돌진
-            GameObject objPlayer = GameObject.Find("Player");//player라는 이름을 가진 오브젝트 찾기
-            Player player = objPlayer.GetComponent<Player>();//player component를 가져옴
-            Vector3 playerPos = player.transform.position;//player 위치값 저장
-            float distance = transform.position.x - playerPos.x;//보스와 플레이어간의 거리
-            if(distance > 15f)//플레이어가 왼쪽편에 있을때
+
+            //일정 시간마다 돌진함
+            rushTimer += Time.deltaTime;//돌진 쿨타임
+            if(rushTimer >= 30f)
             {
+                //만약 스펠패턴 작동중이라면 작동안함
+                if (Attack2 == true) return;
+
                 isRush = true;
+                //움직임을 멈춤
                 rigid.velocity = Vector2.zero;
-                scale.x = 1;
-                transform.localScale = scale;
-                rigid.velocity = new Vector2(-20f, 0f);
-                Invoke("offRush", 1f);
-            }
-            else if(distance < -15f)//플레이어가 오른쪽편에 있을때
-            {
-                isRush = true;
-                rigid.velocity = Vector2.zero;
-                scale.x = -1;
-                transform.localScale = scale;
-                rigid.velocity = new Vector2(20f, 0f);
-                Invoke("offRush", 1f);
+                //현재 바라보고있는 방향 가져옴
+                float dir = transform.localScale.x;
+                //그 방향으로 벽에 닿을때까지 돌진함
+                if(dir == 1)
+                {
+                    float power = 40f;
+                    rigid.AddForce(Vector2.left * power, ForceMode2D.Impulse); 
+                }
+                else if(dir == -1)
+                {
+                    float power = 40f;
+                    rigid.AddForce(Vector2.right * power, ForceMode2D.Impulse);
+                }
+                //벽에 닿으면 반대방향으로 전환 후 원래대로
+                if(turnRange.IsTouchingLayers(layerGround) == true)
+                {
+                    turn();
+                    rushTimer = 0.0f;
+                    isRush = false;
+                }
             }
         }
-    }
-
-    private void offRush()
-    {
-        isRush = false;
     }
 
     private void onOffSpell()
     {
         if(onSpell == 1) return;
         spellTimer += Time.deltaTime;
-        if(spellTimer >= 10.0f)
+        if(spellTimer >= 15.0f)
         {
             spellTimer = 0;
             onSpell = 1;
@@ -346,6 +354,7 @@ public class BossManager : MonoBehaviour
         {
             isMeet = true;
         }
+        phasePattern();
     }
 
     private void createSpell(GameObject _obj, Vector3 _pos, Vector3 _rot)

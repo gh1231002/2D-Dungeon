@@ -15,13 +15,18 @@ public class UiManager : MonoBehaviour
     [SerializeField] Button MainMenu;
     [SerializeField] Button Guide;
     [SerializeField] Button GuideExit;
+    [SerializeField] Button ModeOnOff;
     [SerializeField] GameObject PausePanel;
     [SerializeField] GameObject GuidePanel;
+    [SerializeField] GameObject DebugMode;
     [SerializeField] float uiPlayerHp;
 
     Player player;
     bool isOpen;
     bool guideOpen;
+    bool isdebugMode = false;
+    Vector2 playerPos;
+    string curScene;
 
     public static UiManager instance;
 
@@ -38,6 +43,7 @@ public class UiManager : MonoBehaviour
         }
         PausePanel.SetActive(false);
         GuidePanel.SetActive(false);
+        DebugMode.SetActive(false);
     }
     void Start()
     {
@@ -70,6 +76,7 @@ public class UiManager : MonoBehaviour
             Time.timeScale = 1.0f;
             Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
             rigid.bodyType = RigidbodyType2D.Static;
+            curScene = SceneManager.GetActiveScene().name;//어떤 씬에서 버튼을 눌렀는지 값으로 저장
         });
         Guide.onClick.AddListener(() =>
         {
@@ -83,6 +90,35 @@ public class UiManager : MonoBehaviour
             guideOpen = false;
             Time.timeScale = 1.0f;
         });
+        ModeOnOff.onClick.AddListener(() =>
+        {
+            if(isdebugMode == false)
+            {
+                isdebugMode = true;
+                DebugMode.SetActive(true);
+            }
+            else if(isdebugMode == true)
+            {
+                isdebugMode = false;
+                DebugMode.SetActive(false);
+            }
+        });
+    }
+    /// <summary>
+    /// 디버그모드가 onoff인지 전달
+    /// </summary>
+    /// <returns></returns>
+    public bool DebugModeOnOff()
+    {
+        return isdebugMode;
+    }
+    /// <summary>
+    /// 인게임에서 메인화면으로 넘어갈때 무슨 씬이었는지 전달
+    /// </summary>
+    /// <returns></returns>
+    public string ReCurScene()
+    {
+        return curScene;
     }
     /// <summary>
     /// 특정키 입력시 패널을 끄고 킴

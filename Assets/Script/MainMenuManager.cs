@@ -10,25 +10,27 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField]Button conti;
     [SerializeField]Button quit;
     [SerializeField]GameObject contiPanel;
-    string SceneName;
+    string SceneName = "";
     UiManager uiManager;
     Player player;
     bool isOpen;
     private void Awake()
     {
         contiPanel.SetActive(false);
-        SceneName = "";
     }
     private void Start()
     {
         player = Player.instance;
+        uiManager = UiManager.instance;
         //게임을 처음시작할때
         start.onClick.AddListener(() =>
         {
             LoadControl.LoadScene("Stage1");
-            player.transform.position = new Vector2(-18f, -2f);
+            player.transform.position = new Vector2(-18f, -2f);//처음동작한 이후 또 클릭하면 새게임버튼처럼 이용
         });
+
         //플레이했던적이 있을때
+        SceneName = PlayerPrefs.GetString(Tool.sceneNameKey);
         conti.onClick.AddListener(() =>
         {
             if (SceneName == "")
@@ -44,6 +46,7 @@ public class MainMenuManager : MonoBehaviour
         quit.onClick.AddListener(() =>
         {
 #if UNITY_EDITOR
+            PlayerPrefs.DeleteKey(Tool.sceneNameKey);
             UnityEditor.EditorApplication.isPlaying = false;
 #else
            Application.Quit();
@@ -57,7 +60,6 @@ public class MainMenuManager : MonoBehaviour
         {
             contiPanel.SetActive(false);
         }
-        uiManager = UiManager.instance;
-        SceneName = uiManager.ReCurScene();
+        //SceneName = uiManager.ReCurScene();
     }
 }

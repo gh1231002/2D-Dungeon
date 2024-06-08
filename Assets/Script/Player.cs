@@ -22,6 +22,8 @@ public class Player : MonoBehaviour
     bool isHurt = false;
     [SerializeField]bool isLadder = false;//사다리
     [SerializeField] BoxCollider2D AttackBox;
+    [SerializeField] int coinCount = 0;
+    [SerializeField] int atkDamage = 1;
 
     Camera cam;
     Animator anim;
@@ -82,6 +84,12 @@ public class Player : MonoBehaviour
             Vector2 target = collision.transform.position;
             onDamaged(target);
         }
+        if(collision.gameObject.tag == "Item")//item 태그의 오브젝트를 먹으면
+        {
+            Destroy(collision.gameObject);//닿은 오브젝트 삭제
+            coinCount += 1;//아이템 카운트 증가
+            uiManager.SetItemGet(coinCount);//ui매니저에게 카운트 값 전달
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -138,7 +146,7 @@ public class Player : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         AttackBox.enabled = false;
-        transform.position = new Vector2(-18f, -2f); //Stage1 시작 위치
+        //transform.position = new Vector2(-18f, -2f); //Stage1 시작 위치
         playerCurHp = playerMaxHp;
         if (instance == null)
         {
@@ -376,5 +384,21 @@ public class Player : MonoBehaviour
     public float RePlayerCurHp()
     {
         return playerCurHp;
+    }
+    /// <summary>
+    /// 플레이어 공격력 값을 return
+    /// </summary>
+    /// <returns></returns>
+    public int RePlayerAtkDamage()
+    {
+        return atkDamage;
+    }
+    /// <summary>
+    /// 플레이어가 사망했는지 아닌지 값 전달
+    /// </summary>
+    /// <returns></returns>
+    public bool ReisDead()
+    {
+        return isDeath;
     }
 }

@@ -1229,6 +1229,7 @@ MonoBehaviour:
   enterForce: 5
   isLadder: 0
   AttackBox: {fileID: 1571208850}
+  coinCount: 0
   slideTimer: 0.5
 --- !u!50 &753606103
 Rigidbody2D:
@@ -23616,6 +23617,7 @@ MonoBehaviour:
   AtkBox2: {fileID: 431892658}
   isDeath: 0
   attackNum: 0
+  dropItem: {fileID: 7944069301783195143, guid: d08d2491f4b809d4fad4a28c8aab7f94, type: 3}
   type: 4
 --- !u!1 &1703486596
 GameObject:

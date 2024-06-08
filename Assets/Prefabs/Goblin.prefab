@@ -276,6 +276,7 @@ MonoBehaviour:
   AtkBox2: {fileID: 3143269098829188624}
   isDeath: 0
   attackNum: 0
+  dropItem: {fileID: 7944069301783195143, guid: d08d2491f4b809d4fad4a28c8aab7f94, type: 3}
   type: 2
 --- !u!95 &5700543946861639585
 Animator:

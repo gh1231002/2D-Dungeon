@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 public class UiManager : MonoBehaviour
 {
@@ -13,18 +15,22 @@ public class UiManager : MonoBehaviour
     [SerializeField] Button Pause;
     [SerializeField] Button PauseExit;
     [SerializeField] Button MainMenu;
+    [SerializeField] Button DeMainMenu;
     [SerializeField] Button Guide;
     [SerializeField] Button GuideExit;
     [SerializeField] Button ModeOnOff;
     [SerializeField] GameObject PausePanel;
     [SerializeField] GameObject GuidePanel;
     [SerializeField] GameObject DebugMode;
+    [SerializeField] GameObject DeathPanel;
     [SerializeField] float uiPlayerHp;
+    [SerializeField] TMP_Text counttext;
 
     Player player;
     bool isOpen;
     bool guideOpen;
     bool isdebugMode = false;
+    bool playerDeath;
     Vector2 playerPos;
     string curScene;
 
@@ -43,6 +49,7 @@ public class UiManager : MonoBehaviour
         }
         PausePanel.SetActive(false);
         GuidePanel.SetActive(false);
+        DeathPanel.SetActive(false);
         DebugMode.SetActive(false);
     }
     void Start()
@@ -76,7 +83,11 @@ public class UiManager : MonoBehaviour
             Time.timeScale = 1.0f;
             Rigidbody2D rigid = player.GetComponent<Rigidbody2D>();
             rigid.bodyType = RigidbodyType2D.Static;
-            curScene = SceneManager.GetActiveScene().name;//어떤 씬에서 버튼을 눌렀는지 값으로 저장
+
+            PlayerPrefs.SetString(Tool.sceneNameKey, SceneManager.GetActiveScene().name);
+            //PlayerPrefs.DeleteKey(Tool.sceneNameKey); //키에 저장한 값을 삭제할때 
+
+            //curScene = SceneManager.GetActiveScene().name;//어떤 씬에서 버튼을 눌렀는지 값으로 저장
         });
         Guide.onClick.AddListener(() =>
         {
@@ -102,6 +113,12 @@ public class UiManager : MonoBehaviour
                 isdebugMode = false;
                 DebugMode.SetActive(false);
             }
+        });
+        DeMainMenu.onClick.AddListener(() =>
+        {
+            LoadControl.LoadScene("MainMenu");
+            DeathPanel.SetActive(false);
+            PlayerPrefs.DeleteKey(Tool.sceneNameKey);//플레이어가 있던 신 값 삭제
         });
     }
     /// <summary>
@@ -158,12 +175,23 @@ public class UiManager : MonoBehaviour
             Time.timeScale = 1.0f;
         }
     }
+
+    public void SetItemGet(int _Num)
+    {
+        string value = $"{_Num}";
+        counttext.text = value;
+    }
     private void Update()
     {
         //btnDoit();
         onoffPanel();
         guideOnOff();
         uiPlayerHp = player.RePlayerCurHp();
+        playerDeath = player.ReisDead();
+        if(playerDeath == true)//플레이어가 사망하면 사망패널 on
+        {
+            DeathPanel.SetActive(true);
+        }
         switch (uiPlayerHp)
         {
             case 0:

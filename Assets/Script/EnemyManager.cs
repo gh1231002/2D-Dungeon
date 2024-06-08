@@ -31,6 +31,8 @@ public class EnemyManager : MonoBehaviour
     float attackTimer = 0.0f;
     [SerializeField]int attackNum = 0;
     private Vector2 scale;
+    [SerializeField,Tooltip("드롭할 아이템")] GameObject dropItem;
+    int playerAtk = 0;
 
 
     public enum EnemyType
@@ -63,7 +65,7 @@ public class EnemyManager : MonoBehaviour
         {
             isEnter = true;
             isHurt = true;
-            Hit(1);
+            Hit(playerAtk);
             Vector2 target = collision.transform.position;
             hitDamaged(target);
         }
@@ -84,6 +86,10 @@ public class EnemyManager : MonoBehaviour
             moveSpeed *= -1;
         }
     }
+    private void Start()
+    {
+        player = Player.instance;
+    }
 
     private void Update()
     {
@@ -92,6 +98,7 @@ public class EnemyManager : MonoBehaviour
         enterCooltime();
         move();
         atkNum();
+        playerAtk = player.RePlayerAtkDamage();
     }
 
     private void FixedUpdate()
@@ -200,11 +207,18 @@ public class EnemyManager : MonoBehaviour
         sr.color = new Color(1f, 0f, 0f, 1f);
         Invoke("offHit", 0.3f);
 
-        if(CurHp <= 0f)
+        if(CurHp <= 0f)//체력이 0 이하라면
         {
             isDeath = true;
-            anim.Play("Death");
+            anim.Play("Death");//사망애니메이션 실행
+            //죽은 자리에 아이템 코인 드랍
+            CreatItem(transform.position);
         }
+    }
+
+    private void CreatItem(Vector2 _pos)
+    {
+        Instantiate(dropItem, _pos, Quaternion.identity);
     }
 
     private void offHit()

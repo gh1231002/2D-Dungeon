@@ -118,7 +118,8 @@ public class UiManager : MonoBehaviour
         {
             LoadControl.LoadScene("MainMenu");
             DeathPanel.SetActive(false);
-            PlayerPrefs.DeleteKey(Tool.sceneNameKey);//플레이어가 있던 신 값 삭제
+            PlayerPrefs.SetString(Tool.sceneNameKey, SceneManager.GetActiveScene().name);
+            player.gameOver();
         });
     }
     /// <summary>

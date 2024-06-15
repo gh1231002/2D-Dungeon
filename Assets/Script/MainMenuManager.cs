@@ -26,7 +26,7 @@ public class MainMenuManager : MonoBehaviour
         start.onClick.AddListener(() =>
         {
             LoadControl.LoadScene("Stage1");
-            player.transform.position = new Vector2(-18f, -2f);//처음동작한 이후 또 클릭하면 새게임버튼처럼 이용
+            player.transform.position = new Vector2(-18f, -2f);//처음동작한 이후 또 클릭하면 새게임버튼처럼 스테이지1 시작위치로 이동
         });
 
         //플레이했던적이 있을때

@@ -270,7 +270,7 @@ Transform:
   - {fileID: 5349876023583484513}
   - {fileID: 4560640029333353706}
   m_Father: {fileID: 0}
-  m_RootOrder: 28
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6588733265782293990
 SpriteRenderer:
@@ -471,7 +471,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4560640029333353706}
   - component: {fileID: 2480778339294430389}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: AirBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}

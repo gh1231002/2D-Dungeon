@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class LoadControl : MonoBehaviour
 {
     static string nextScene;
-    GameObject obj = null;
+    GameObject objUi = null;
     GameObject objPlayer;
     [SerializeField]Image loadingBar;
     Player player;
@@ -20,16 +20,16 @@ public class LoadControl : MonoBehaviour
     private void Awake()
     {
         player = Player.instance;
-        obj = GameObject.Find("PlayerUi");
+        objUi = GameObject.Find("PlayerUi");
         objPlayer = GameObject.Find("Player");
     }
     void Start()
     {
-        if(obj == null)
+        if(objUi == null)
         {
             StartCoroutine(basicLoadSceneProcess());
         }
-        else if(obj != null)
+        else if(objUi != null)
         {
             StartCoroutine(LoadSceneProcess());
         }
@@ -69,7 +69,7 @@ public class LoadControl : MonoBehaviour
         AsyncOperation op = SceneManager.LoadSceneAsync(nextScene);
         op.allowSceneActivation = false;
 
-        obj.gameObject.SetActive(false);
+        objUi.gameObject.SetActive(false);
         objPlayer.gameObject.SetActive(false);
 
         float timer = 0f;
@@ -91,7 +91,7 @@ public class LoadControl : MonoBehaviour
 
                     op.allowSceneActivation = true;
 
-                    obj.gameObject.SetActive(true);
+                    objUi.gameObject.SetActive(true);
                     objPlayer.gameObject.SetActive(true);
 
                     if (nextScene == "Loading" || nextScene == "MainMenu")

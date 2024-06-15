@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class Player : MonoBehaviour
     [SerializeField]bool isLadder = false;//사다리
     [SerializeField] BoxCollider2D AttackBox;
     [SerializeField] int coinCount = 0;
-    [SerializeField] int atkDamage = 1;
+    [SerializeField] int atkDamage = 1;//플레이어의 공격력
 
     Camera cam;
     Animator anim;
@@ -31,6 +32,7 @@ public class Player : MonoBehaviour
     BoxCollider2D boxCollider;
     Vector3 moveDir; //플레이어 이동값
     bool isDebug = false;//디버그 모드 작동중인지
+    string curScene;
 
     [Header("슬라이드")]
     bool isSlide = false;//대쉬하는중인지
@@ -38,8 +40,8 @@ public class Player : MonoBehaviour
     float slideTime = 0.0f;
 
     public static Player instance;
-
     UiManager uiManager;
+    ShopManager shopManager;
 
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -88,7 +90,6 @@ public class Player : MonoBehaviour
         {
             Destroy(collision.gameObject);//닿은 오브젝트 삭제
             coinCount += 1;//아이템 카운트 증가
-            uiManager.SetItemGet(coinCount);//ui매니저에게 카운트 값 전달
         }
     }
 
@@ -129,7 +130,7 @@ public class Player : MonoBehaviour
 
     public void Hit(float _damage)
     {
-        if (isDebug == true) return;
+        if (isDebug == true || isDeath == true) return;
 
         playerCurHp -= _damage;
         if (playerCurHp <= 0f)
@@ -139,14 +140,13 @@ public class Player : MonoBehaviour
         }
     }
 
-
     private void Awake()
     {
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         AttackBox.enabled = false;
-        //transform.position = new Vector2(-18f, -2f); //Stage1 시작 위치
+        transform.position = new Vector2(-18f, -2f); //Stage1 시작 위치
         playerCurHp = playerMaxHp;
         if (instance == null)
         {
@@ -163,11 +163,17 @@ public class Player : MonoBehaviour
     {
         cam = Camera.main;
         uiManager = UiManager.instance;
+        shopManager = ShopManager.instance;
     }
 
     void Update()
     {
         if (isDeath == true) return;
+        uiManager.SetItemGet(coinCount);//ui매니저에게 카운트 값 전달
+        if(playerCurHp > 3)
+        {
+            playerCurHp = 3;
+        }
         isDebug = uiManager.DebugModeOnOff();
         move();
         doLadder();
@@ -377,6 +383,56 @@ public class Player : MonoBehaviour
             }
         }
     }
+    public void upgradeAtk(int _Atk)
+    {
+        atkDamage = _Atk;
+        if(atkDamage > 5)
+        {
+            atkDamage = 5;
+        }
+    }
+
+    public void updownCoin(int _count)
+    {
+        coinCount = _count;
+        if(coinCount <= 0)
+        {
+            coinCount = 0;
+        }
+    }
+
+    /// <summary>
+    /// 플레이어가 사망한 후 메인으로 돌아갈때 실행
+    /// </summary>
+    public void gameOver()
+    {
+        isDeath = false;
+        newGame();
+    }
+    private void newGame()
+    {
+        playerCurHp = playerMaxHp;
+        curScene = PlayerPrefs.GetString(Tool.sceneNameKey);
+        switch (curScene)
+        {
+            case "Stage1" :
+                {
+                    transform.position = new Vector2(-18f, -2f);
+                }
+                break;
+            case "Stage2":
+                {
+                    transform.position = new Vector2(-27.89f, -0.14f);
+                }
+                break;
+            case "BossStage":
+                {
+                    transform.position = new Vector2(-29.5f, -2.5f);
+                }
+                break;
+        }
+    }
+
     /// <summary>
     /// 플레이어 현재 Hp값을 return하는 함수
     /// </summary>
@@ -400,5 +456,13 @@ public class Player : MonoBehaviour
     public bool ReisDead()
     {
         return isDeath;
+    }
+    public float rePlayerMaxHp()
+    {
+        return playerMaxHp;
+    }
+    public int coinitemCount()
+    {
+        return coinCount;
     }
 }

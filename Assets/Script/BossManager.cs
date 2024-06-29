@@ -11,6 +11,7 @@ public class BossManager : MonoBehaviour
     [SerializeField] private float maxHp = 0.0f;
     [SerializeField] private float curHp = 0.0f;
     [SerializeField] private float moveSpeed = 0.0f;
+    int playerDamage;
 
     Animator anim;
     Rigidbody2D rigid;
@@ -72,7 +73,7 @@ public class BossManager : MonoBehaviour
         if(collision.gameObject.tag == "PBox")
         {
             isHurt = true;
-            Hit(1);
+            Hit(playerDamage);
             Invoke("offHurt", 0.8f);
         }
     }
@@ -92,6 +93,10 @@ public class BossManager : MonoBehaviour
         moveSpeed *= -1;
         phase1 = maxHp * 0.7f;
         phase2 = maxHp * 0.25f;
+    }
+    private void Start()
+    {
+        player = Player.instance;
     }
 
     public void Hit(float _damage)
@@ -115,6 +120,7 @@ public class BossManager : MonoBehaviour
         doAni();
         onOffUi();
         onOffSpell();
+        playerDamage = player.RePlayerAtkDamage();
     }
     /// <summary>
     /// 플레이어가 있는 방향으로 이동하는 함수
@@ -331,6 +337,7 @@ public class BossManager : MonoBehaviour
             onSpell = 1;
         }
     }
+
     /// <summary>
     /// 슬라이더 ui에 보스 체력값 전달
     /// </summary>
@@ -379,5 +386,10 @@ public class BossManager : MonoBehaviour
     private void offBox()
     {
         AtkBox.enabled = false;
+    }
+
+    public bool reBossDeath()
+    {
+        return isDeath;
     }
 }
